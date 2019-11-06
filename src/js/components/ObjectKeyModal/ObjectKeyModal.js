@@ -17,15 +17,14 @@ export default class extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.setState({ input: this.props.input });
+        this.setState({input: this.props.input ? this.props.input : ''});
     }
 
     render() {
         const {theme, rjvId, isValid} = this.props;
         const {input} = this.state;
-
         const valid = isValid(input);
-
+        console.log(this.state);
         return (
             <div
                 class="key-modal-request"
@@ -34,47 +33,49 @@ export default class extends React.PureComponent {
             >
                 <div
                     {...Theme(theme, 'key-modal')}
-                    onClick={(e)=>{e.stopPropagation();}}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
                 >
                     <div {...Theme(theme, 'key-modal-label')}>
-                    Key Name:
+                        Key Name:
                     </div>
                     <div style={{position: 'relative'}}>
                         <input {...Theme(theme, 'key-modal-input')}
-                            class="key-modal-input"
-                            ref={el => el && el.focus()}
-                            spellCheck={false}
-                            value={input}
-                            placeholder="..."
-                            onChange={(e)=>{
-                                this.setState({
-                                    input: e.target.value
-                                });
-                            }}
-                            onKeyPress={(e)=>{
-                                if (valid && e.key === 'Enter') {
-                                    this.submit();
-                                } else if (e.key === 'Escape') {
-                                    this.closeModal();
-                                }
-                            }}
+                               class="key-modal-input"
+                               ref={el => el && el.focus()}
+                               spellCheck={false}
+                               value={input}
+                               placeholder="..."
+                               onChange={(e) => {
+                                   this.setState({
+                                       input: e.target.value
+                                   });
+                               }}
+                               onKeyPress={(e) => {
+                                   if (valid && e.key === 'Enter') {
+                                       this.submit();
+                                   } else if (e.key === 'Escape') {
+                                       this.closeModal();
+                                   }
+                               }}
                         />
                         {valid
                             ? <CheckCircle {...Theme(theme, 'key-modal-submit')}
-                                class="key-modal-submit"
-                                onClick={e => this.submit()}
+                                           class="key-modal-submit"
+                                           onClick={e => this.submit()}
                             />
                             : null}
                     </div>
                     <span {...Theme(theme, 'key-modal-cancel')}>
                         <Cancel {...Theme(theme, 'key-modal-cancel-icon')}
-                            class="key-modal-cancel"
-                            onClick={()=>{
-                                dispatcher.dispatch({
-                                    rjvId: rjvId,
-                                    name: 'RESET'
-                                });
-                            }} />
+                                class="key-modal-cancel"
+                                onClick={() => {
+                                    dispatcher.dispatch({
+                                        rjvId: rjvId,
+                                        name: 'RESET'
+                                    });
+                                }}/>
                     </span>
                 </div>
             </div>
