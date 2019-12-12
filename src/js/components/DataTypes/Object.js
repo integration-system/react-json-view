@@ -1,10 +1,19 @@
 import React from 'react';
 import {polyfill} from 'react-lifecycles-compat';
-import { toType } from './../../helpers/util';
+import {toType} from './../../helpers/util';
 import dispatcher from './../../helpers/dispatcher';
 
 //data type components
-import { JsonObject } from './DataTypes';
+import {
+    JsonBoolean, JsonDate,
+    JsonFloat,
+    JsonFunction,
+    JsonInteger,
+    JsonNan,
+    JsonNull,
+    JsonObject,
+    JsonString, JsonUndefined
+} from './DataTypes';
 
 import VariableEditor from './../VariableEditor';
 import VariableMeta from './../VariableMeta';
@@ -15,11 +24,14 @@ import ObjectName from './../ObjectName';
 import AttributeStore from './../../stores/ObjectAttributes';
 
 //icons
-import { CollapsedIcon, ExpandedIcon } from './../ToggleIcons';
-import { Edit } from './../icons';
+import {CollapsedIcon, ExpandedIcon} from './../ToggleIcons';
+import {CheckCircle, Edit, RemoveCircle as Remove} from './../icons';
 
 //theme
 import Theme from './../../themes/getStyle';
+import stringifyVariable from '../../helpers/stringifyVariable';
+import parseInput from '../../helpers/parseInput';
+import AutosizeTextarea from 'react-textarea-autosize';
 
 //increment 1 with each nested object & array
 const DEPTH_INCREMENT = 1;
@@ -32,7 +44,14 @@ class RjvObject extends React.PureComponent {
         const state = RjvObject.getState(props);
         this.state = {
             ...state,
-            prevProps: {}
+            prevProps: {},
+            editMode: false,
+            isFocused: false,
+            editValue: '',
+            parsedInput: {
+                type: false,
+                value: null
+            }
         };
     }
 
@@ -62,10 +81,10 @@ class RjvObject extends React.PureComponent {
             size
         };
         return state;
-    }
+    };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        const { prevProps } = prevState;
+        const {prevProps} = prevState;
         if (nextProps.src !== prevProps.src ||
             nextProps.collapsed !== prevProps.collapsed ||
             nextProps.name !== prevProps.name ||
@@ -92,7 +111,7 @@ class RjvObject extends React.PureComponent {
                 this.state.expanded
             );
         });
-    }
+    };
 
     getObjectContent = (depth, src, props) => {
         return (
@@ -101,14 +120,14 @@ class RjvObject extends React.PureComponent {
                     class="object-content"
                     {...Theme(this.props.theme, 'pushed-content')}
                 >
-                    {this.renderObjectContents(src, props)}
+                    {this.state.editMode ? this.getEditInput() : this.renderObjectContents(src, props)}
                 </div>
             </div>
         );
-    }
+    };
 
     getEllipsis = () => {
-        const { size } = this.state;
+        const {size} = this.state;
 
         if (size === 0) {
             //don't render an ellipsis when an object has no items
@@ -124,18 +143,22 @@ class RjvObject extends React.PureComponent {
                 </div>
             );
         }
-    }
+    };
 
     getObjectMetaData = src => {
-        const { rjvId, theme } = this.props;
-        const { size } = this.state;
-        return <VariableMeta size={size} {...this.props} />;
-    }
+        const {rjvId, theme} = this.props;
+        const {size} = this.state;
+        return <VariableMeta size={size} isEdit={this.state.editMode}
+                             renderIcon={this.getEditIcon()} {...this.props} />;
+    };
 
-    getEditIcon = () => {
-        const { theme, name, namespace, src, rjvId } = this.props;        
+    getEditKeyIcon = () => {
+        const {theme, name, namespace, src, rjvId, parent_type} = this.props;
+        if (parent_type === 'array') {
+            return false;
+        }
         return (
-            <div class="click-to-edit" style={{ verticalAlign: 'top' }} title={"Edit Key"}>
+            <div class="click-to-edit" style={{verticalAlign: 'top'}} title={'Edit Key'}>
                 <Edit
                     class="click-to-edit-icon"
                     {...Theme(theme, 'editVarIcon')}
@@ -146,7 +169,7 @@ class RjvObject extends React.PureComponent {
                             rjvId: rjvId,
                             data: {
                                 name,
-                                namespace: namespace.splice(0, namespace.length -1),
+                                namespace: namespace.splice(0, namespace.length - 1),
                                 existing_value: src,
                                 _removed: false,
                                 key_name: name
@@ -156,10 +179,10 @@ class RjvObject extends React.PureComponent {
                 />
             </div>
         );
-    }
+    };
 
     getBraceStart(object_type, expanded) {
-        const { src, theme, iconStyle, parent_type } = this.props;
+        const {src, theme, iconStyle, parent_type} = this.props;
 
         if (parent_type === 'array_group') {
             return (
@@ -182,12 +205,12 @@ class RjvObject extends React.PureComponent {
                     }}
                     {...Theme(theme, 'brace-row')}
                 >
-                    {this.getEditIcon()}
+                    {this.getEditKeyIcon()}
                     <div
                         class="icon-container"
                         {...Theme(theme, 'icon-container')}
                     >
-                        <IconComponent {...{ theme, iconStyle }} />
+                        <IconComponent {...{theme, iconStyle}} />
                     </div>
                     <ObjectName {...this.props} />
                     <span {...Theme(theme, 'brace')}>
@@ -214,8 +237,7 @@ class RjvObject extends React.PureComponent {
             iconStyle,
             ...rest
         } = this.props;
-
-        const { object_type, expanded } = this.state;
+        const {object_type, expanded} = this.state;
 
         let styles = {};
         if (!jsvRoot && parent_type !== 'array_group') {
@@ -259,9 +281,10 @@ class RjvObject extends React.PureComponent {
             parent_type,
             index_offset,
             groupArraysAfterLength,
-            namespace
+            namespace,
+            src
         } = this.props;
-        const { object_type } = this.state;
+        const {object_type} = this.state;
         let theme = props.theme;
         let elements = [],
             variable;
@@ -319,13 +342,228 @@ class RjvObject extends React.PureComponent {
                         singleIndent={SINGLE_INDENT}
                         namespace={namespace}
                         type={this.props.type}
+                        elements={elements.length}
                         {...props}
                     />
                 );
             }
         });
         return elements;
-    }
+    };
+
+    prepopInput = src => {
+        const stringifiedValue = stringifyVariable(src);
+        const detected = parseInput(stringifiedValue);
+        this.setState({
+            editMode: true,
+            editValue: stringifiedValue,
+            expanded: this.state.expanded ? this.state.expanded : !this.state.expanded,
+            parsedInput: {
+                type: detected.type,
+                value: detected.value,
+            }
+        });
+    };
+
+    getEditInput = () => {
+        const {theme} = this.props;
+        const {editValue} = this.state;
+        return (
+            <div>
+                <AutosizeTextarea
+                    type="text"
+                    inputRef={input => input && input.focus()}
+                    value={editValue}
+                    class="variable-editor"
+                    onChange={event => {
+                        const value = event.target.value;
+                        const detected = parseInput(value);
+                        this.setState({
+                            editValue: value,
+                            parsedInput: {
+                                type: detected.type,
+                                value: detected.value
+                            }
+                        });
+                    }}
+                    placeholder="update this value"
+                    {...Theme(theme, 'edit-input',)}
+                />
+                <div {...Theme(theme, 'edit-icon-container')}>
+                    <Remove
+                        class="edit-cancel"
+                        {...Theme(theme, 'cancel-icon')}
+                        onClick={() => {
+                            this.setState({editMode: false});
+                        }}
+                    />
+                    <CheckCircle
+                        class="edit-check string-value"
+                        {...Theme(theme, 'check-icon')}
+                        onClick={() => {
+                            this.submitEdit(true);
+                        }}
+                    />
+                    <div>{this.showDetected()}</div>
+                </div>
+
+            </div>
+        );
+    };
+
+    showDetected = () => {
+        const {theme, variable, namespace, rjvId} = this.props;
+        const {type, value} = this.state.parsedInput;
+        const detected = this.getDetectedInput();
+        if (detected) {
+            return (
+                <div>
+                    <div {...Theme(theme, 'detected-row')}>
+                        {detected}
+                        <CheckCircle
+                            class="edit-check detected"
+                            style={{
+                                verticalAlign: 'top',
+                                paddingLeft: '3px',
+                                ...Theme(theme, 'check-icon').style
+                            }}
+                            onClick={() => {
+                                this.submitEdit(true);
+                            }}
+                        />
+                    </div>
+                </div>
+            );
+        }
+    };
+
+    getDetectedInput = () => {
+        const {parsedInput} = this.state;
+        const {type, value} = parsedInput;
+        const {props} = this;
+        const {theme} = props;
+
+        if (type !== false) {
+            switch (type.toLowerCase()) {
+                case 'object':
+                    return (
+                        <span>
+                        <span
+                            style={{
+                                ...Theme(theme, 'brace').style,
+                                cursor: 'default'
+                            }}
+                        >
+                            {'{'}
+                        </span>
+                        <span
+                            style={{
+                                ...Theme(theme, 'ellipsis').style,
+                                cursor: 'default'
+                            }}
+                        >
+                                ...
+                        </span>
+                        <span
+                            style={{
+                                ...Theme(theme, 'brace').style,
+                                cursor: 'default'
+                            }}
+                        >
+                            {'}'}
+                        </span>
+                    </span>
+                    );
+                case 'array':
+                    return (
+                        <span>
+                        <span
+                            style={{
+                                ...Theme(theme, 'brace').style,
+                                cursor: 'default'
+                            }}
+                        >
+                            {'['}
+                        </span>
+                        <span
+                            style={{
+                                ...Theme(theme, 'ellipsis').style,
+                                cursor: 'default'
+                            }}
+                        >
+                                ...
+                        </span>
+                        <span
+                            style={{
+                                ...Theme(theme, 'brace').style,
+                                cursor: 'default'
+                            }}
+                        >
+                            {']'}
+                        </span>
+                    </span>
+                    );
+                case 'string':
+                    return <JsonString value={value} {...props} />;
+                case 'integer':
+                    return <JsonInteger value={value} {...props} />;
+                case 'float':
+                    return <JsonFloat value={value} {...props} />;
+                case 'boolean':
+                    return <JsonBoolean value={value} {...props} />;
+                case 'function':
+                    return <JsonFunction value={value} {...props} />;
+                case 'null':
+                    return <JsonNull {...props} />;
+                case 'nan':
+                    return <JsonNan {...props} />;
+                case 'undefined':
+                    return <JsonUndefined {...props} />;
+                case 'date':
+                    return <JsonDate value={new Date(value)} {...props} />;
+            }
+        }
+    };
+
+    submitEdit = (submit_detected) => {
+        const {namespace, rjvId, name} = this.props;
+        const {editValue, parsedInput} = this.state;
+        let new_value = editValue;
+        if (submit_detected && parsedInput.type) {
+            new_value = parsedInput.value;
+        }
+        this.setState({
+            editMode: false
+        });
+        dispatcher.dispatch({
+            name: 'VARIABLE_UPDATED',
+            rjvId: rjvId,
+            data: {
+                name: name,
+                namespace: namespace,
+                existing_value: editValue,
+                new_value: new_value,
+                variable_removed: false,
+                object_update: true,
+            }
+        });
+    };
+
+    getEditIcon = () => {
+        const {src, theme} = this.props;
+        return (
+            <div class="click-to-edit" style={{verticalAlign: 'top'}} title={'Edit Value'}>
+                <Edit
+                    class="click-to-edit-icon"
+                    {...Theme(theme, 'editVarIcon')}
+                    onClick={() => {
+                        this.prepopInput(src);
+                    }}
+                />
+            </div>
+        );
+    };
+
 }
 
 //just store name, value and type with a variable

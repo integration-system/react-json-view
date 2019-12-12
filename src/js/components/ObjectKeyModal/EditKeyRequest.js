@@ -11,8 +11,9 @@ import Theme from './../../themes/getStyle';
 export default class extends React.PureComponent {
 
     render() {
-        const {active, theme, rjvId} = this.props;
-        const {name} = ObjectAttributes.get(rjvId, 'action', 'edit-key-request') || {};
+        const {active, theme, rjvId } = this.props;
+        const { name } = ObjectAttributes.get(rjvId, 'action', 'edit-key-request') || {};
+
         return active ? (
             <ObjectKeyModal
                 rjvId={rjvId}
@@ -35,10 +36,10 @@ export default class extends React.PureComponent {
     }
 
     submit = (input) => {
-        const {rjvId} = this.props;
+        const { rjvId } = this.props;
         let request = ObjectAttributes.get(
             rjvId, 'action', 'edit-key-request'
-        );
+        );     
         request.key_name = input;
         request.new_value = request.existing_value;
         request.variable_key_updated = true;

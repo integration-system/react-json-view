@@ -6,7 +6,7 @@ import {toType} from './../helpers/util';
 
 //icons
 import {
-    RemoveCircle as Remove, AddCircle as Add
+    RemoveCircle as Remove, AddCircle as Add, Edit, CheckCircle
 } from './icons';
 
 //theme
@@ -19,12 +19,12 @@ export default class extends React.PureComponent {
         if (displayObjectSize) {
             return (
                 <span class="object-size"
-                    {...Theme(theme, 'object-size')}>
+                      {...Theme(theme, 'object-size')}>
                     {size} item{size === 1 ? '' : 's'}
                 </span>
             );
         }
-    }
+    };
 
     getAddAttribute = () => {
         const {
@@ -42,7 +42,7 @@ export default class extends React.PureComponent {
                         const request = {
                             name: depth > 0 ? name : null,
                             namespace: namespace.splice(
-                                0, (namespace.length-1)
+                                0, (namespace.length - 1)
                             ),
                             existing_value: src,
                             variable_removed: false,
@@ -68,7 +68,7 @@ export default class extends React.PureComponent {
                 />
             </span>
         );
-    }
+    };
 
     getRemoveObject = () => {
         const {
@@ -80,7 +80,7 @@ export default class extends React.PureComponent {
             return;
         }
         return (
-            <span class="click-to-remove" >
+            <span class="click-to-remove">
                 <Remove
                     class="click-to-remove-icon"
                     {...Theme(theme, 'removeVarIcon')}
@@ -90,7 +90,7 @@ export default class extends React.PureComponent {
                             rjvId: rjvId,
                             data: {
                                 name: name,
-                                namespace: namespace.splice(0, (namespace.length-1)),
+                                namespace: namespace.splice(0, (namespace.length - 1)),
                                 existing_value: src,
                                 variable_removed: true
                             },
@@ -99,37 +99,41 @@ export default class extends React.PureComponent {
                 />
             </span>
         );
-    }
+    };
 
     render = () => {
         const {
             theme,
             onDelete,
             onAdd,
+            onEdit,
+            isEdit,
             enableClipboard,
             src,
-            namespace
+            namespace,
+            renderIcon
         } = this.props;
         return (
             <div
-                {...Theme(theme, 'object-meta-data')}
+                {...Theme(theme, 'object-meta-data', {cursor: 'pointer'})}
                 class='object-meta-data'
-                onClick={(e)=>{
+                onClick={(e) => {
                     e.stopPropagation();
                 }}
             >
                 {/* size badge display */}
                 {this.getObjectSize()}
                 {/* copy to clipboard icon */}
-                {enableClipboard
+                {enableClipboard && isEdit
                     ? (<CopyToClipboard
                         clickCallback={enableClipboard}
                         {...{src, theme, namespace}} />)
                     : null
                 }
                 {/* copy add/remove icons */}
-                {onAdd !== false ? this.getAddAttribute() : null}
-                {onDelete !== false ? this.getRemoveObject() : null}
+                {onAdd !== false && !isEdit ? this.getAddAttribute() : null}
+                {onEdit !== false && !isEdit ? renderIcon : null}
+                {onDelete !== false && !isEdit ? this.getRemoveObject() : null}
             </div>
         );
     }
