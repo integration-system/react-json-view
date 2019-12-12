@@ -12,7 +12,7 @@ export default class extends React.PureComponent {
 
     render() {
         const {active, theme, rjvId} = this.props;
-        console.log(rjvId);
+
         return active ? (
             <ObjectKeyModal
                 rjvId={rjvId}
@@ -29,21 +29,23 @@ export default class extends React.PureComponent {
             rjvId, 'action', 'new-key-request'
         );
         return (
-            input != ''
+            input != null && input != ''
+            && Object.keys(request.existing_value).indexOf(input) === -1
         );
-    }
+    };
 
     submit = (input) => {
         const {rjvId} = this.props;
-        console.log(rjvId);
         let request = ObjectAttributes.get(
             rjvId, 'action', 'new-key-request'
         );
-        request.name = input;
-        request.key_name = input;
-        request.new_value = {};  //{...request.existing_value};
-        //request.new_value[input] = this.props.defaultValue;
-        console.log(request);
+        if (request.namespace.length !== 0) {
+            request.new_value = {...request.existing_value};
+        } else {
+            request.new_value = {};
+        }
+        request.new_value[input] = this.props.defaultValue;
+
         dispatcher.dispatch({
             name: 'VARIABLE_ADDED',
             rjvId: rjvId,

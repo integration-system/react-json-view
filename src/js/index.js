@@ -36,7 +36,7 @@ class ReactJsonView extends React.PureComponent {
     }
 
     //reference id for this instance
-    rjvId = Date.now().toString()
+    rjvId = Date.now().toString();
 
     //all acceptable props and default values
     static defaultProps = {
@@ -60,7 +60,7 @@ class ReactJsonView extends React.PureComponent {
         style: {},
         validationMessage: 'Validation Error',
         defaultValue: null,
-    }
+    };
 
     // will trigger whenever setState() is called, or parent passes in new props.
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -143,7 +143,7 @@ class ReactJsonView extends React.PureComponent {
             'add-key-request': this.addKeyRequest,
             'edit-key-request': this.editKeyRequest
         };
-    }
+    };
     //make sure props are passed in as expected
     static validateState = (state) => {
         const validatedState = {};
@@ -177,7 +177,7 @@ class ReactJsonView extends React.PureComponent {
             // override the original state
             ...validatedState
         };
-    }
+    };
 
     render() {
         const {
@@ -270,19 +270,19 @@ class ReactJsonView extends React.PureComponent {
                 validationFailure: true
             });
         }
-    }
+    };
 
     addKeyRequest = () => {
         this.setState({
             addKeyRequest: true
         });
-    }
+    };
 
     editKeyRequest = () => {
         this.setState({
             editKeyRequest: true
         });
-    }
+    };
 
     resetState = () => {
         this.setState({
