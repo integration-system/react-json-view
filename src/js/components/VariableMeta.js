@@ -124,7 +124,7 @@ export default class extends React.PureComponent {
                 {/* size badge display */}
                 {this.getObjectSize()}
                 {/* copy to clipboard icon */}
-                {enableClipboard && isEdit
+                {enableClipboard && !isEdit
                     ? (<CopyToClipboard
                         clickCallback={enableClipboard}
                         {...{src, theme, namespace}} />)
