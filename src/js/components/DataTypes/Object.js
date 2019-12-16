@@ -149,7 +149,7 @@ class RjvObject extends React.PureComponent {
         const {rjvId, theme} = this.props;
         const {size} = this.state;
         return <VariableMeta size={size} isEdit={this.state.editMode}
-                             renderIcon={this.getEditIcon()} {...this.props} />;
+            renderIcon={this.getEditIcon()} {...this.props} />;
     };
 
     getEditKeyIcon = () => {
@@ -386,6 +386,24 @@ class RjvObject extends React.PureComponent {
                             }
                         });
                     }}
+                    onKeyDown={e => {
+                        switch (e.key) {
+                        case 'Escape': {
+                            this.setState({
+                                editMode: false,
+                                editValue: ''
+                            });
+                            break;
+                        }
+                        case 'Enter': {
+                            if (e.ctrlKey || e.metaKey) {
+                                this.submitEdit(true);
+                            }
+                            break;
+                        }
+                        }
+                        e.stopPropagation();
+                    }}
                     placeholder="update this value"
                     {...Theme(theme, 'edit-input',)}
                 />
@@ -445,9 +463,9 @@ class RjvObject extends React.PureComponent {
 
         if (type !== false) {
             switch (type.toLowerCase()) {
-                case 'object':
-                    return (
-                        <span>
+            case 'object':
+                return (
+                    <span>
                         <span
                             style={{
                                 ...Theme(theme, 'brace').style,
@@ -473,10 +491,10 @@ class RjvObject extends React.PureComponent {
                             {'}'}
                         </span>
                     </span>
-                    );
-                case 'array':
-                    return (
-                        <span>
+                );
+            case 'array':
+                return (
+                    <span>
                         <span
                             style={{
                                 ...Theme(theme, 'brace').style,
@@ -502,30 +520,31 @@ class RjvObject extends React.PureComponent {
                             {']'}
                         </span>
                     </span>
-                    );
-                case 'string':
-                    return <JsonString value={value} {...props} />;
-                case 'integer':
-                    return <JsonInteger value={value} {...props} />;
-                case 'float':
-                    return <JsonFloat value={value} {...props} />;
-                case 'boolean':
-                    return <JsonBoolean value={value} {...props} />;
-                case 'function':
-                    return <JsonFunction value={value} {...props} />;
-                case 'null':
-                    return <JsonNull {...props} />;
-                case 'nan':
-                    return <JsonNan {...props} />;
-                case 'undefined':
-                    return <JsonUndefined {...props} />;
-                case 'date':
-                    return <JsonDate value={new Date(value)} {...props} />;
+                );
+            case 'string':
+                return <JsonString value={value} {...props} />;
+            case 'integer':
+                return <JsonInteger value={value} {...props} />;
+            case 'float':
+                return <JsonFloat value={value} {...props} />;
+            case 'boolean':
+                return <JsonBoolean value={value} {...props} />;
+            case 'function':
+                return <JsonFunction value={value} {...props} />;
+            case 'null':
+                return <JsonNull {...props} />;
+            case 'nan':
+                return <JsonNan {...props} />;
+            case 'undefined':
+                return <JsonUndefined {...props} />;
+            case 'date':
+                return <JsonDate value={new Date(value)} {...props} />;
             }
         }
     };
 
     submitEdit = (submit_detected) => {
+        console.log('submitting');
         const {namespace, rjvId, name} = this.props;
         const {editValue, parsedInput} = this.state;
         let new_value = editValue;

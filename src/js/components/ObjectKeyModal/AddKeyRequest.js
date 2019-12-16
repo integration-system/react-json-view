@@ -12,7 +12,6 @@ export default class extends React.PureComponent {
 
     render() {
         const {active, theme, rjvId} = this.props;
-
         return active ? (
             <ObjectKeyModal
                 rjvId={rjvId}
@@ -51,6 +50,6 @@ export default class extends React.PureComponent {
             rjvId: rjvId,
             data: request
         });
-    }
+    };
 
 }

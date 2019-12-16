@@ -1,6 +1,5 @@
 import React from 'react';
 import AutosizeTextarea from 'react-textarea-autosize';
-
 import {toType} from './../helpers/util';
 import dispatcher from './../helpers/dispatcher';
 import parseInput from './../helpers/parseInput';

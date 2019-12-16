@@ -164,7 +164,6 @@ export class AddCircle extends React.PureComponent {
     render() {
         const {props} = this;
         const {style, ...rest} = props;
-
         return (
             <span {...rest}>
                 <svg {...getIconStyle(style)}

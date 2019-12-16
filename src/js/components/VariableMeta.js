@@ -48,6 +48,7 @@ export default class extends React.PureComponent {
                             variable_removed: false,
                             key_name: null
                         };
+                        console.log('meta req-->', request);
                         if (toType(src) === 'object') {
                             dispatcher.dispatch({
                                 name: 'ADD_VARIABLE_KEY_REQUEST',
