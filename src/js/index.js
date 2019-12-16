@@ -191,7 +191,6 @@ class ReactJsonView extends React.PureComponent {
         } = this.state;
 
         const { style, defaultValue } = this.props;
-
         return (
             <div
                 class="react-json-view"

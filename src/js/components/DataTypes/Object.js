@@ -158,7 +158,7 @@ class RjvObject extends React.PureComponent {
             return false;
         }
         return (
-            <div class="click-to-edit" style={{verticalAlign: 'top'}} title={'Edit Key'}>
+            <div className="click-to-edit" style={{verticalAlign: 'top'}} title={'Edit Key'}>
                 <Edit
                     class="click-to-edit-icon"
                     {...Theme(theme, 'editVarIcon')}
@@ -169,7 +169,7 @@ class RjvObject extends React.PureComponent {
                             rjvId: rjvId,
                             data: {
                                 name,
-                                namespace: namespace.splice(0, namespace.length - 1),
+                                namespace: [...namespace].splice(0, namespace.length - 1),
                                 existing_value: src,
                                 _removed: false,
                                 key_name: name
@@ -207,7 +207,7 @@ class RjvObject extends React.PureComponent {
                 >
                     {this.getEditKeyIcon()}
                     <div
-                        class="icon-container"
+                        className="icon-container"
                         {...Theme(theme, 'icon-container')}
                     >
                         <IconComponent {...{theme, iconStyle}} />
@@ -249,7 +249,7 @@ class RjvObject extends React.PureComponent {
 
         return (
             <div
-                class="object-key-val"
+                className="object-key-val"
                 {...Theme(theme, jsvRoot ? 'jsv-root' : 'objectKeyVal', styles)}
             >
                 {this.getBraceStart(object_type, expanded)}
@@ -260,7 +260,7 @@ class RjvObject extends React.PureComponent {
                         ...rest
                     })
                     : this.getEllipsis()}
-                <span class="brace-row">
+                <span className="brace-row">
                     <span
                         style={{
                             ...Theme(theme, 'brace').style,

@@ -86,6 +86,7 @@ class ObjectAttributes extends EventEmitter {
         let {
             name, namespace, new_value, existing_value, variable_key_updated, variable_removed, key_name, object_update
         } = request;
+        namespace = [...namespace];
         namespace.shift();
         let path = namespace[0];
         namespace.forEach((e, index) => {

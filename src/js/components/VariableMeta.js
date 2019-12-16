@@ -39,13 +39,9 @@ export default class extends React.PureComponent {
                     class="click-to-add-icon"
                     {...Theme(theme, 'addVarIcon')}
                     onClick={() => {
-                        if (namespace[0] !== false) {
-                            namespace.unshift('false');
-                            console.log('namespace-->', namespace);
-                        }
                         const request = {
                             name: depth > 0 ? name : null,
-                            namespace: namespace.splice(
+                            namespace:  [...namespace].splice(
                                 0, (namespace.length - 1)
                             ),
                             existing_value: src,
