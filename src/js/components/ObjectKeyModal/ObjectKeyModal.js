@@ -71,7 +71,6 @@ export default class extends React.PureComponent {
                         <Cancel {...Theme(theme, 'key-modal-cancel-icon')}
                                 class="key-modal-cancel"
                                 onClick={() => {
-                                    console.log('REMOVE-->', this.props);
                                     dispatcher.dispatch({
                                         rjvId: rjvId,
                                         name: 'RESET'

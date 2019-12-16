@@ -544,7 +544,6 @@ class RjvObject extends React.PureComponent {
     };
 
     submitEdit = (submit_detected) => {
-        console.log('submitting');
         const {namespace, rjvId, name} = this.props;
         const {editValue, parsedInput} = this.state;
         let new_value = editValue;
