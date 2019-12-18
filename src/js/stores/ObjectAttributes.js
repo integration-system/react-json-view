@@ -31,54 +31,54 @@ class ObjectAttributes extends EventEmitter {
     handleAction = (action) => {
         const {rjvId, data, name} = action;
         switch (name) {
-            case 'RESET':
-                this.emit('reset-' + rjvId);
-                break;
-            case 'VARIABLE_UPDATED':
-                action.data.updated_src = this.updateSrc(
-                    rjvId, data
-                );
-                this.set(
-                    rjvId, 'action', 'variable-update',
-                    {...data, type: 'variable-edited'}
-                );
-                this.emit('variable-update-' + rjvId);
-                break;
-            case 'VARIABLE_REMOVED':
-                action.data.updated_src = this.updateSrc(
-                    rjvId, data
-                );
-                this.set(
-                    rjvId, 'action', 'variable-update',
-                    {...data, type: 'variable-removed'}
-                );
-                this.emit('variable-update-' + rjvId);
-                break;
-            case 'VARIABLE_ADDED':
-                action.data.updated_src = this.updateSrc(
-                    rjvId, data
-                );
-                this.set(
-                    rjvId, 'action', 'variable-update',
-                    {...data, type: 'variable-added'}
-                );
-                this.emit('variable-update-' + rjvId);
-                break;
-            case 'VARIABLE_KEY_UPDATED':
-                action.data.updated_src = this.updateSrc(
-                    rjvId, data
-                );
-                this.set(rjvId, 'action', 'variable-update', {...data, type: 'variable-key-added'});
-                this.emit('variable-update-' + rjvId);
-                break;
-            case 'ADD_VARIABLE_KEY_REQUEST':
-                this.set(rjvId, 'action', 'new-key-request', data);
-                this.emit('add-key-request-' + rjvId);
-                break;
-            case 'UPDATE_VARIABLE_KEY_REQUEST':
-                this.set(rjvId, 'action', 'edit-key-request', data);
-                this.emit('edit-key-request-' + rjvId);
-                break;
+        case 'RESET':
+            this.emit('reset-' + rjvId);
+            break;
+        case 'VARIABLE_UPDATED':
+            action.data.updated_src = this.updateSrc(
+                rjvId, data
+            );
+            this.set(
+                rjvId, 'action', 'variable-update',
+                {...data, type: 'variable-edited'}
+            );
+            this.emit('variable-update-' + rjvId);
+            break;
+        case 'VARIABLE_REMOVED':
+            action.data.updated_src = this.updateSrc(
+                rjvId, data
+            );
+            this.set(
+                rjvId, 'action', 'variable-update',
+                {...data, type: 'variable-removed'}
+            );
+            this.emit('variable-update-' + rjvId);
+            break;
+        case 'VARIABLE_ADDED':
+            action.data.updated_src = this.updateSrc(
+                rjvId, data
+            );
+            this.set(
+                rjvId, 'action', 'variable-update',
+                {...data, type: 'variable-added'}
+            );
+            this.emit('variable-update-' + rjvId);
+            break;
+        case 'VARIABLE_KEY_UPDATED':
+            action.data.updated_src = this.updateSrc(
+                rjvId, data
+            );
+            this.set(rjvId, 'action', 'variable-update', {...data, type: 'variable-key-added'});
+            this.emit('variable-update-' + rjvId);
+            break;
+        case 'ADD_VARIABLE_KEY_REQUEST':
+            this.set(rjvId, 'action', 'new-key-request', data);
+            this.emit('add-key-request-' + rjvId);
+            break;
+        case 'UPDATE_VARIABLE_KEY_REQUEST':
+            this.set(rjvId, 'action', 'edit-key-request', data);
+            this.emit('edit-key-request-' + rjvId);
+            break;
         }
     };
 
@@ -146,7 +146,6 @@ class ObjectAttributes extends EventEmitter {
         this.set(
             rjvId, 'global', 'src', updated_src
         );
-
         return updated_src;
     };
 
@@ -163,7 +162,7 @@ class ObjectAttributes extends EventEmitter {
             result[idx] = this.deepCopy(src[idx], copy_namespace);
         }
         return result;
-    }
+    };
 }
 
 const attributeStore = new ObjectAttributes;

@@ -243,7 +243,6 @@ class ReactJsonView extends React.PureComponent {
             namespace,
             existing_value,
         };
-
         switch (type) {
         case 'variable-added':
             result = onAdd(on_edit_payload);
@@ -256,6 +255,9 @@ class ReactJsonView extends React.PureComponent {
             break;
         case 'variable-removed':
             result = onDelete(on_edit_payload);
+            break;
+        case 'variable-key-added':
+            result = onEdit(on_edit_payload);
             break;
         }
 
