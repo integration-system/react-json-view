@@ -86,8 +86,10 @@ class ObjectAttributes extends EventEmitter {
         let {
             name, namespace, new_value, existing_value, variable_key_updated, variable_removed, key_name, object_update
         } = request;
+
         namespace = [...namespace];
         namespace.shift();
+
         let path = namespace[0];
         namespace.forEach((e, index) => {
             if (index === 0) {
@@ -131,8 +133,13 @@ class ObjectAttributes extends EventEmitter {
             //update copied variable at specified namespace
             if (object_update) {
                 if (lodash.isEmpty(objPath)) {
-                    updated_src[name] = new_value;
+                    if (namespace.length === 0) {
+                        updated_src = new_value;
+                    } else {
+                        updated_src[name] = new_value;
+                    }
                 } else {
+                    console.log(updated_src, path, new_value);
                     updated_src = lodash.set(updated_src, path, new_value);
                 }
             } else if (name !== null) {
