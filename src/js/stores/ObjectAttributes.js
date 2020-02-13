@@ -139,7 +139,7 @@ class ObjectAttributes extends EventEmitter {
                         updated_src[name] = new_value;
                     }
                 } else {
-                    console.log(updated_src, path, new_value);
+
                     updated_src = lodash.set(updated_src, path, new_value);
                 }
             } else if (name !== null) {

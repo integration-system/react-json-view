@@ -58,7 +58,6 @@
     "scripts": {
         "build":
             "webpack --config webpack/webpack.config.js -p --display-error-details --progress --optimize-minimize",
-        "prebuild": "npm run test:unit",
         "build:demo":
             "webpack --config webpack/webpack.config-demo.js -p --display-error-details --progress --optimize-minimize",
         "dev":
