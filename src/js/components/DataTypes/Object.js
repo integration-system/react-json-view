@@ -289,8 +289,11 @@ class RjvObject extends React.PureComponent {
         let elements = [],
             variable;
         let keys = Object.keys(variables || {});
-        if (this.props.sortKeys) {
+        if (this.props.sortKeys && object_type !=='array') {
             keys = keys.sort();
+        }
+        if (this.props.sortKeys && object_type ==='array') {
+            variables = variables.sort();
         }
         keys.forEach(name => {
             variable = new JsonVariable(name, variables[name]);
