@@ -292,7 +292,7 @@ class RjvObject extends React.PureComponent {
         if (this.props.sortKeys && object_type !=='array') {
             keys = keys.sort();
         }
-        if (this.props.sortKeys && object_type ==='array') {
+        if (object_type ==='array') {
             variables = variables.sort();
         }
         keys.forEach(name => {
