@@ -1,6 +1,6 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 import dispatcher from './../helpers/dispatcher';
-import {toType} from './../helpers/util';
+import { toType } from './../helpers/util';
 import lodash from 'lodash';
 
 //store persistent display attributes for objects and arrays
@@ -29,56 +29,56 @@ class ObjectAttributes extends EventEmitter {
     };
 
     handleAction = (action) => {
-        const {rjvId, data, name} = action;
+        const { rjvId, data, name } = action;
         switch (name) {
-        case 'RESET':
-            this.emit('reset-' + rjvId);
-            break;
-        case 'VARIABLE_UPDATED':
-            action.data.updated_src = this.updateSrc(
-                rjvId, data
-            );
-            this.set(
-                rjvId, 'action', 'variable-update',
-                {...data, type: 'variable-edited'}
-            );
-            this.emit('variable-update-' + rjvId);
-            break;
-        case 'VARIABLE_REMOVED':
-            action.data.updated_src = this.updateSrc(
-                rjvId, data
-            );
-            this.set(
-                rjvId, 'action', 'variable-update',
-                {...data, type: 'variable-removed'}
-            );
-            this.emit('variable-update-' + rjvId);
-            break;
-        case 'VARIABLE_ADDED':
-            action.data.updated_src = this.updateSrc(
-                rjvId, data
-            );
-            this.set(
-                rjvId, 'action', 'variable-update',
-                {...data, type: 'variable-added'}
-            );
-            this.emit('variable-update-' + rjvId);
-            break;
-        case 'VARIABLE_KEY_UPDATED':
-            action.data.updated_src = this.updateSrc(
-                rjvId, data
-            );
-            this.set(rjvId, 'action', 'variable-update', {...data, type: 'variable-key-added'});
-            this.emit('variable-update-' + rjvId);
-            break;
-        case 'ADD_VARIABLE_KEY_REQUEST':
-            this.set(rjvId, 'action', 'new-key-request', data);
-            this.emit('add-key-request-' + rjvId);
-            break;
-        case 'UPDATE_VARIABLE_KEY_REQUEST':
-            this.set(rjvId, 'action', 'edit-key-request', data);
-            this.emit('edit-key-request-' + rjvId);
-            break;
+            case 'RESET':
+                this.emit('reset-' + rjvId);
+                break;
+            case 'VARIABLE_UPDATED':
+                action.data.updated_src = this.updateSrc(
+                    rjvId, data
+                );
+                this.set(
+                    rjvId, 'action', 'variable-update',
+                    { ...data, type: 'variable-edited' }
+                );
+                this.emit('variable-update-' + rjvId);
+                break;
+            case 'VARIABLE_REMOVED':
+                action.data.updated_src = this.updateSrc(
+                    rjvId, data
+                );
+                this.set(
+                    rjvId, 'action', 'variable-update',
+                    { ...data, type: 'variable-removed' }
+                );
+                this.emit('variable-update-' + rjvId);
+                break;
+            case 'VARIABLE_ADDED':
+                action.data.updated_src = this.updateSrc(
+                    rjvId, data
+                );
+                this.set(
+                    rjvId, 'action', 'variable-update',
+                    { ...data, type: 'variable-added' }
+                );
+                this.emit('variable-update-' + rjvId);
+                break;
+            case 'VARIABLE_KEY_UPDATED':
+                action.data.updated_src = this.updateSrc(
+                    rjvId, data
+                );
+                this.set(rjvId, 'action', 'variable-update', { ...data, type: 'variable-key-added' });
+                this.emit('variable-update-' + rjvId);
+                break;
+            case 'ADD_VARIABLE_KEY_REQUEST':
+                this.set(rjvId, 'action', 'new-key-request', data);
+                this.emit('add-key-request-' + rjvId);
+                break;
+            case 'UPDATE_VARIABLE_KEY_REQUEST':
+                this.set(rjvId, 'action', 'edit-key-request', data);
+                this.emit('edit-key-request-' + rjvId);
+                break;
         }
     };
 
@@ -135,18 +135,17 @@ class ObjectAttributes extends EventEmitter {
                 if (lodash.isEmpty(objPath)) {
                     if (namespace.length === 0) {
                         updated_src = new_value;
-                    } else {
-                        updated_src[name] = new_value;
+                    } 
+                    else {
+                        updated_src = lodash.set(updated_src, path, new_value);
                     }
                 } else {
-
                     updated_src = lodash.set(updated_src, path, new_value);
                 }
             } else if (name !== null) {
                 walk[name] = new_value;
             } else {
                 walk[Object.keys(new_value)[0]] = null;
-                //updated_src = new_value;
             }
         }
 
@@ -163,7 +162,7 @@ class ObjectAttributes extends EventEmitter {
         if (type === 'array') {
             result = [...src];
         } else if (type === 'object') {
-            result = {...src};
+            result = { ...src };
         }
         if (idx !== undefined) {
             result[idx] = this.deepCopy(src[idx], copy_namespace);

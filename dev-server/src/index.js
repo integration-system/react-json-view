@@ -73,7 +73,8 @@ function getExampleJson1() {
                 } else {
                     return 'other';
                 }
-            }
+            },
+            testA:[4,2,3,6,8,9,'bcd','abc','$wwww','$$dsds','dsqw',{secondkey2:'key2',firstkey1:'key1'}],
         }
     };
 }
