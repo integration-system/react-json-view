@@ -149,7 +149,10 @@ class VariableEditor extends React.PureComponent {
     };
 
     getEditKeyIcon = () => {
-        const {variable: {name, value}, theme, namespace, rjvId} = this.props;
+        const {variable: {name, value}, theme, namespace, rjvId,editKeys} = this.props;
+        if(!editKeys){
+            return false;
+        }
         return (
             <div class="click-to-edit" style={{verticalAlign: 'top'}} title={'Edit Key'}>
                 <Edit
