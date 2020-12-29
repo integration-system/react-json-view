@@ -153,7 +153,10 @@ class RjvObject extends React.PureComponent {
     };
 
     getEditKeyIcon = () => {
-        const {theme, name, namespace, src, rjvId, parent_type} = this.props;
+        const {theme, name, namespace, src, rjvId, parent_type,editKeys} = this.props;
+        if(!editKeys){
+            return false;
+        }
         if (parent_type === 'array') {
             return false;
         }
